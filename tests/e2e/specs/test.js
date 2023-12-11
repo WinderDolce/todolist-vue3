@@ -11,7 +11,7 @@ describe('Todo List', () => {
   });
 
   it('Crear nueva tarea', () => {
-    cy.get('.form-task_input').type('Nueva tarea');
+    cy.get('.form-task_input').type('Nueva tarea desde CYPRESS');
     cy.get('.form-task_button').click();
     cy.get('.card-task_name').contains('Nueva tarea').should('exist');
   });
