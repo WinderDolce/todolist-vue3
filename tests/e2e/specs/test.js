@@ -16,6 +16,19 @@ describe('Todo List', () => {
     cy.get('.card-task_name').contains('Nueva tarea').should('exist');
   });
 
+  it('Editar tarea desde la caja de texto', () => {
+    cy.get('.card-task_button-edit').should('exist').click();
+    cy.get('.card-task_input-edition').type('SE HA EDITADO DESDE CYPRESS');
+    cy.get('.card-task_button-save').click();
+  });
+  
+  it('Editar tarea y cancelar la edición', () => {
+    cy.get('.card-task_button-edit').should('exist').click();
+    cy.get('.card-task_input-edition').type('CANCELANDO EDICIÓN DESDE CYPRESS');
+    cy.get('.card-task_button-cancel').click();
+    
+  });
+
   it('Marcar tarea como realizada', () => {
     cy.get('.card-task_checkbox').first().check();
     cy.get('.card-task_name').first().should('have.class', 'done');

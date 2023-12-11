@@ -18,21 +18,41 @@
 
     <template v-else-if="todoStore.tasks.length && !todoStore.loading">
       <div class="task-container">
-        <div class="card-task" v-for="task in todoStore.tasks">
-          <input 
-            type="checkbox" 
-            class="card-task_checkbox" 
-            :checked="task.done" 
-            v-on:click.prevent="updateTask(task.id)" 
+        <div class="card-task" v-for="task in todoStore.tasks" :key="task.id">
+          <input
+            v-if="task.id !== editingTaskId"
+            type="checkbox"
+            class="card-task_checkbox"
+            :checked="task.done"
+            v-on:click.prevent="updateTask(task.id)"
           />
 
-          <strong class="card-task_name" :class="{ 'done': task.done }"> {{ task.name }}</strong>
+          <strong v-if="task.id !== editingTaskId" class="card-task_name" :class="{ 'done': task.done }">{{ task.name }}</strong>
 
-          <button 
-            type="button" 
+          <input
+            v-else
+            type="text"
+            v-model="task.editedName"
+            class="card-task_input-edition"
+          />
+
+          <div v-if="task.id === editingTaskId">
+            <button class="card-task_button-save" @click="saveEditedTask(task)">Guardar</button>
+            <button class="card-task_button-cancel" @click="cancelEditTask(task.id)">Cancelar</button>
+          </div>
+
+          <button
+            type="button"
             class="card-task_button"
-            v-on:click.prevent="deleteTask(task.id)" 
+            v-on:click.prevent="deleteTask(task.id)"
           >X</button>
+
+          <button
+            v-if="task.id !== editingTaskId"
+            type="button"
+            class="card-task_button-edit"
+            v-on:click.prevent="startEditTask(task.id)"
+          >Editar</button>
         </div>
       </div>
     </template>
@@ -47,6 +67,7 @@
 import Layout from './layouts/default.vue';
 import { defineComponent, ref } from 'vue';
 import { useTodoStore } from './store/todo';
+import { Task } from './models/task.models'; // Asegúrate de importar correctamente el modelo de tarea
 
 export default defineComponent({
   components: { Layout },
@@ -56,6 +77,7 @@ export default defineComponent({
     const todoStore = useTodoStore();
     const errorMessage = ref<string>('');
     const showErrorPopup = ref<boolean>(false);
+    const editingTaskId = ref<string | null>(null);
 
     function createTask(): void {
       if (!taskName.value.trim()) {
@@ -82,14 +104,38 @@ export default defineComponent({
       todoStore.updateTask(id);
     }
 
+    function startEditTask(id: string): void {
+      editingTaskId.value = id;
+    }
+
+    function saveEditedTask(task: Task): void {
+      if (task.editedName !== undefined) {
+        task.name = task.editedName;
+      }
+      task.editedName = undefined;
+      editingTaskId.value = null;
+    }
+
+    function cancelEditTask(id: string): void {
+      const task = todoStore.tasks.find((task) => task.id === id);
+      if (task) {
+        task.editedName = undefined;
+        editingTaskId.value = null;
+      }
+    }
+
     return {
       taskName,
       createTask,
       deleteTask,
       updateTask,
+      startEditTask,
+      saveEditedTask,
+      cancelEditTask,
       todoStore,
       errorMessage,
       showErrorPopup,
+      editingTaskId,
     };
   }
 });
@@ -171,10 +217,19 @@ $padding: 10px;
         }
       }
 
-      &_button {
+      &_button,
+      &_button-edit,
+      &_button-save,
+      &_button-cancel {
         all: initial;
         float: right;
         cursor: pointer;
+      }
+
+      &_button-edit,
+      &_button-save,
+      &_button-cancel {
+        margin-left: 0.5rem;
       }
     }
   }
