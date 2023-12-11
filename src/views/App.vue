@@ -79,10 +79,10 @@
 
 <script lang="ts">
 // Importación de módulos y componentes
-import Layout from './layouts/default.vue';
+import Layout from '../layouts/default.vue';
 import { defineComponent, ref } from 'vue';
-import { useTodoStore } from './store/todo';
-import { Task } from './models/task.models';
+import { useTodoStore } from '../store/todo';
+import { Task } from '../models/task.models';
 
 export default defineComponent({
   components: { Layout },
@@ -97,21 +97,24 @@ export default defineComponent({
 
     // Función para agregar nueva tarea
     function createTask(): void {
-      if (!taskName.value.trim()) {
-        errorMessage.value = 'Debe indicar la tarea a almacenar';
-        showErrorPopup.value = true;
+  if (!taskName.value.trim()) {
+    errorMessage.value = 'Debe indicar la tarea a almacenar';
+    showErrorPopup.value = true;
 
-        setTimeout(() => {
-          showErrorPopup.value = false;
-          errorMessage.value = '';
-        }, 2000);
+    setTimeout(() => {
+      showErrorPopup.value = false;
+      errorMessage.value = '';
+    }, 2000);
 
-        return;
-      }
+    return;
+  }
 
-      todoStore.addTask(taskName.value);
-      taskName.value = '';
-    }
+  // Llamamos al método addTask de la tienda
+  todoStore.addTask(taskName.value);
+
+  // Limpia el campo de entrada después de agregar la tarea
+  taskName.value = '';
+}
 
     // Función para eliminar tarea
     function deleteTask(id: string): void {

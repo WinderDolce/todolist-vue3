@@ -1,5 +1,5 @@
 // Definición del estado y funciones de gestión de la tienda 'useTodoStore'
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore } from 'pinia';
 import { Task } from '../models/task.models';
 import { generateID, sleep } from '../utils';
 

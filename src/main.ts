@@ -3,7 +3,7 @@ import { createPinia } from 'pinia';
 
 // Importamos la función createApp y el componente principal App de Vue 3
 import { createApp } from 'vue';
-import App from './App.vue';
+import App from './views/App.vue';
 
 // Creamos una instancia de la aplicación Vue
 const app = createApp(App);
